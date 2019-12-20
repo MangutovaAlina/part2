@@ -32,4 +32,31 @@ public class Person {
     public String toString() {
         return "Sex: " + sex + " Age: " + age + " Name: " + name + "\n";
     }
+
+    /**
+     * переопределяем сравнние персон
+     *
+     * @param obj объект класса Person
+     * @return false или true
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        Person person = (Person) obj;
+
+        if ((getAge() == person.getAge())
+                && (getName() == person.getName())
+                && (getSex() == person.getSex())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

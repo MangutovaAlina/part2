@@ -14,7 +14,6 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
-        /** вводим N */
         System.out.print("Количество: ");
         int cnt = input.nextInt();
 
@@ -27,11 +26,9 @@ public class Main {
             num = (random.nextInt(65536) - 32768);
 
             try {
-                /** если исходное число отрицательное - исключение */
                 if (num < 0)
                     throw new MyException();
                 else {
-                    /** вычисляем квадратный корень */
                     sqroot = Math.sqrt(num);
                     // round
                     if (Math.pow((long) sqroot, 2) == num)

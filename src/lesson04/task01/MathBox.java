@@ -16,10 +16,6 @@ public class MathBox {
         }
     }
 
-    public void setNumbers(List<Number> numberList) {
-        this.numberList = numberList;
-    }
-
     public List<Number> getNumbers() {
         return numberList;
     }

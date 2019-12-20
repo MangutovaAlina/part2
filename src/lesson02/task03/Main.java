@@ -8,11 +8,11 @@ import java.util.Scanner;
 
 /**
  * Задание 3. Дан массив объектов Person. Класс Person характеризуется полями age (возраст, целое число 0-100), sex (пол – объект класса Sex со строковыми константами внутри MAN, WOMAN), name (имя - строка). Создать два класса, методы которых будут реализовывать сортировку объектов. Предусмотреть единый интерфейс для классов сортировки. Реализовать два различных метода сортировки этого массива по правилам:
- *
+ * <p>
  * первые идут мужчины
  * выше в списке тот, кто более старший
  * имена сортируются по алфавиту
- *
+ * <p>
  * Программа должна вывести на экран отсортированный список и время работы каждого алгоритма сортировки.
  * Предусмотреть генерацию исходного массива (10000 элементов и более).
  * Если имена людей и возраст совпадают, выбрасывать в программе пользовательское исключение.
@@ -20,11 +20,6 @@ import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        /**
-         * создаем список Person
-         */
-        List<Person> persons = new ArrayList<>();
-        List<Person> personscopy = new ArrayList<>();
         /**
          * вводим количество персон
          */
@@ -37,9 +32,12 @@ public class Main {
         Random r = new Random();
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder names = new StringBuilder();
+
         /**
-         * цикл по введенному количеству персон
+         * создаем список Person
          */
+        List<Person> persons = new ArrayList<>();
+
         for (int i = 0; i < cnt; i++) {
             /**
              * создаем случайное имя
@@ -53,14 +51,29 @@ public class Main {
             /**
              * добавляем в список персон человека со случайным возрастом, именем, полом
              */
-            Person p = new Person(r.nextInt(100),                          //количество лет
+            Person p = new Person(r.nextInt(100),            //количество лет
                     names.toString(),                               // имя
                     Sex.values()[r.nextInt(Sex.values().length)]);  // пол
-            persons.add(p);
-            /**
-             * создаем копию списка, чтобы потом сравнивать время сортировки у одного набора данных
-             */
-            personscopy.add(p);
+
+            boolean addperson = true;
+
+            try {
+                for (int j = 0; j < persons.size(); j++) {
+                    if (p.equals(persons.get(j))) {
+                        throw new MyException();
+                    }
+                }
+
+            } catch (MyException e) {
+                addperson = false;
+                System.out.println("MyException: персоны совпадают!");
+            }
+
+            if (addperson) {
+                persons.add(p);
+            }
+
+
         }
 
         /**
@@ -69,27 +82,26 @@ public class Main {
          * stopTime - конечное время
          * periodTime - разница
          */
-        InsertionSort isort = new InsertionSort();
-        BubbleSort bsort = new BubbleSort();
 
-        long startTime = System.currentTimeMillis();
-        System.out.println("сортировка Insertion Sort");
-        isort.sort(persons);
-        long stopTime = System.currentTimeMillis();
-        long periodTime = stopTime - startTime;
-        System.out.println("время = " + periodTime);
+        List<SortInterface> intfsort = new ArrayList<>();
 
-        startTime = System.currentTimeMillis();
-        System.out.println("сортировка BubbleSort");
-        bsort.sort(personscopy);
-        stopTime = System.currentTimeMillis();
-        periodTime = stopTime - startTime;
-        System.out.println("время = " + periodTime);
+        intfsort.add(new InsertionSort());
+        intfsort.add(new BubbleSort());
 
-        /**
-         *  выводим отсортированный список
-         */
-        System.out.println(persons);
+        for (int i = 0; i < intfsort.size(); i++) {
+            long startTime = System.currentTimeMillis();
+            System.out.println("сортировка " + i);
+            SortInterface sortinterface = intfsort.get(i);
+
+            List<Person> personscopy = new ArrayList<>(persons);
+
+            sortinterface.sort(personscopy);
+            long stopTime = System.currentTimeMillis();
+            long periodTime = stopTime - startTime;
+            System.out.println("время = " + periodTime);
+
+            System.out.println(personscopy);
+        }
     }
 }
 
