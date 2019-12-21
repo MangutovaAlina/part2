@@ -60,22 +60,4 @@ public class ObjectBox {
         return stringBuilder.toString();
     }
 
-    /**
-     * переопределяем метод equals, чтобы использовать его в удалении
-     *
-     * @param object - объект, который сраниваем
-     * @return
-     */
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object == null || getClass() != object.getClass()) {
-            return false;
-        }
-        ObjectBox objectBox = (ObjectBox) object;
-
-        return listObject.equals(objectBox.listObject);
-    }
 }

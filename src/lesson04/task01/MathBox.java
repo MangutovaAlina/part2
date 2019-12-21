@@ -1,23 +1,20 @@
 package lesson04.task01;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * класс MathBox
- * numberList - коллекция
+ * mathSet - коллекция
  */
 public class MathBox {
-    private List<Number> numberList = new ArrayList<Number>();
+    private HashSet mathSet = new HashSet<>();
 
     public MathBox(Number[] number) {
-        for (int i = 0; i < number.length; i++) {
-            this.numberList.add(number[i]);
-        }
+        mathSet = new HashSet<>(Arrays.asList(number));
     }
 
-    public List<Number> getNumbers() {
-        return numberList;
+    public HashSet getNumbers() {
+        return mathSet;
     }
 
     /**
@@ -25,12 +22,23 @@ public class MathBox {
      *
      * @return число double - сумма
      */
-    public double summator() {
-        double summ = 0.0;
-
-        for (int i = 0; i < this.numberList.size(); i++) {
-            summ = summ + this.numberList.get(i).doubleValue();
-
+    public Number summator() {
+        Number summ = 0;
+        Iterator<Number> iterator = this.getNumbers().iterator();
+        while (iterator.hasNext()) {
+            if (summ instanceof Double || iterator.next() instanceof Double) {
+                summ = summ.doubleValue() + iterator.next().doubleValue();
+            } else if (summ instanceof Float || iterator.next() instanceof Float) {
+                summ = summ.floatValue() + iterator.next().floatValue();
+            } else if (summ instanceof Long || iterator.next() instanceof Long) {
+                summ = summ.longValue() + iterator.next().longValue();
+            } else if (summ instanceof Integer || iterator.next() instanceof Integer) {
+                summ = summ.intValue() + iterator.next().intValue();
+            } else if (summ instanceof Short || iterator.next() instanceof Short) {
+                summ = summ.shortValue() + iterator.next().shortValue();
+            } else {
+                summ = summ.byteValue() + iterator.next().byteValue();
+            }
         }
         return summ;
     }
@@ -40,10 +48,26 @@ public class MathBox {
      *
      * @param divider - делитель
      */
-    public void splitter(Number divider) {
-        for (int i = 0; i < this.numberList.size(); i++) {
-            numberList.set(i, this.numberList.get(i).doubleValue() / divider.doubleValue());
+    public void splitter(Integer divider) {
+        HashSet newMathSet = new HashSet<>();
+        Iterator<Number> iterator = this.getNumbers().iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next() instanceof Double) {
+                newMathSet.add(iterator.next().doubleValue() / divider);
+            } else if (iterator.next() instanceof Float) {
+                newMathSet.add(iterator.next().floatValue() / divider);
+            } else if (iterator.next() instanceof Long) {
+                newMathSet.add(iterator.next().longValue() / divider);
+            } else if (iterator.next() instanceof Integer) {
+                newMathSet.add(iterator.next().intValue() / divider);
+            } else if (iterator.next() instanceof Short) {
+                newMathSet.add(iterator.next().shortValue() / divider);
+            } else {
+                newMathSet.add(iterator.next().byteValue() / divider);
+            }
         }
+
+        this.mathSet = newMathSet;
     }
 
     /**
@@ -52,11 +76,7 @@ public class MathBox {
      * @param valueList - значение, которое надо удалить
      */
     public void deleteList(Integer valueList) {
-        for (int i = 0; i < this.numberList.size(); i++) {
-            if (this.numberList.get(i).doubleValue() == valueList.intValue()) {
-                numberList.remove(i);
-            }
-        }
+        this.mathSet.remove(valueList);
     }
 
     /**
@@ -75,7 +95,7 @@ public class MathBox {
         }
 
         MathBox objectMathBox = (MathBox) object;
-        return numberList.equals(objectMathBox);
+        return this.mathSet.equals(objectMathBox);
     }
 
     /**
@@ -85,25 +105,20 @@ public class MathBox {
      */
     @Override
     public int hashCode() {
-        int z = 37;
-        double result = 0.0;
-        for (int i = 0; i < numberList.size(); i++) {
-            result = result + (i * numberList.get(i).doubleValue());
+        int hashMath = 0;
+        for (Iterator<Number> iterator = this.getNumbers().iterator(); iterator.hasNext(); ) {
+            hashMath = hashMath + iterator.next().hashCode();
         }
-        return z * (int) result + this.hashCode();
+        return hashMath;
     }
 
     /**
      * переопределяем строку вывода для класса MathBox
      *
-     * @return возвращает элементы листа в столбик
+     * @return возвращает элементы
      */
     @Override
     public String toString() {
-        String strList = "";
-        for (int i = 0; i < numberList.size(); i++) {
-            strList = strList + numberList.get(i).toString() + "\n";
-        }
-        return strList;
+        return "элементы MathBox: " + mathSet + '}';
     }
 }

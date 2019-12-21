@@ -9,7 +9,6 @@ import java.util.Random;
  * Доработать программу так, чтобы ошибка OutOfMemoryError возникала в Metaspace /Permanent Generation
  */
 
-// попытка установить флаг -XX:MaxMetaspaceSize=32m ни к чему не привела
 public class Main {
     public static void main(String[] args) {
         int cnt = 50000;

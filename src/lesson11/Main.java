@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-/** Задание: Перевести одну из предыдущих работ на использование стримов и лямбда-выражений там, где это уместно (возможно, жертвуя производительностью)
- *
- *  Мне захотелось взять lesson06.task01 потому что с помощью стримов там все сильно упрощается
- *  distinct сам выкидывает дубликаты, sorted сортирует, никакой работы вручную
+/**
+ * Задание: Перевести одну из предыдущих работ на использование стримов и лямбда-выражений там, где это уместно (возможно, жертвуя производительностью)
+ * <p>
+ * Мне захотелось взять lesson06.task01 потому что с помощью стримов там все сильно упрощается
+ * distinct сам выкидывает дубликаты, sorted сортирует, никакой работы вручную
  */
 
 public class Main {
@@ -24,7 +25,9 @@ public class Main {
         writeToFile(strFileList, path + "\\output.txt");
     }
 
-    /** читаем файл
+    /**
+     * читаем файл
+     *
      * @param txtFileName - имя файла
      * @return - возвращаем ArrayList из строчек
      */
@@ -41,9 +44,11 @@ public class Main {
         return result;
     }
 
-    /** пишем в файл
+    /**
+     * пишем в файл
+     *
      * @param listString - что пишем (лист строк)
-     * @param fileName - куда пишем (имя файла)
+     * @param fileName   - куда пишем (имя файла)
      */
     public static void writeToFile(List<String> listString, String fileName) {
         try (BufferedWriter buffWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName)))) {
