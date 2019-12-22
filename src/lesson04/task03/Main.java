@@ -12,21 +12,29 @@ public class Main {
 
         MathBox mathBox = new MathBox(numberInt);
 
+        /** вызываем метод dump для класса MathBox */
+        System.out.println("dump - вывод в строчку массива: " + mathBox.dump());
+
         /** выводим сумму элементов numberList класса MathBox */
         System.out.println("сумма = " + mathBox.summator());
 
         /** удаляем из numberList класса MathBox элемент со значением 5 */
+        System.out.println("удаляем элемент 5");
+        mathBox.deleteObject(5);
+        System.out.println("dump - вывод в строчку финального массива: " + mathBox.dump());
+
+        /** вызываем исключение для добавления */
         try {
-            mathBox.addObject(3);
-            mathBox.addObject(4);
+            if (mathBox.addObject(3) || !(mathBox.addObject(3))) {
+                System.out.println("исключение при добавлении");
+                exceptionShow();
+            }
         } catch (MyException e) {
             e.printStackTrace();
         }
-        /** выводим numberList класса MathBox*/
-        System.out.println("список:\n");
-        System.out.println(mathBox.toString());
+    }
 
-        /** вызываем метод dump для класса MathBox */
-        mathBox.dump(mathBox.getNumbers());
+    public static void exceptionShow() throws Exception {
+        throw new MyException();
     }
 }

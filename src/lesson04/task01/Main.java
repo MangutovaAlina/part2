@@ -17,8 +17,9 @@ public class Main {
 
         MathBox mathBox = new MathBox(number);
 
-        /** выводим сумму элементов numberList класса MathBox */
         System.out.println("начальный массив: " + mathBox.toString());
+
+        /** выводим сумму элементов numberList класса MathBox */
         System.out.println("сумма элементов = " + mathBox.summator());
 
         /** удаляем из numberList класса MathBox элемент со значением 5 */
@@ -28,5 +29,9 @@ public class Main {
         /** делим элементы numberList класса MathBox на число */
         mathBox.splitter(3);
         System.out.println("после деления на 3: " + mathBox.toString());
+
+        /** получаем хэшкод */
+        System.out.println("хэшкод: " + mathBox.hashCode());
+
     }
 }

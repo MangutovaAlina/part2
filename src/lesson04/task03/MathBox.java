@@ -1,25 +1,14 @@
 package lesson04.task03;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-public class MathBox extends ObjectBox {
-    private List<Number> numberList = new ArrayList<Number>();
+/**
+ * доработанный класс MathBox
+ */
+public class MathBox extends ObjectBox<Number> {
 
     public MathBox(Number[] number) {
-        for (int i = 0; i < number.length; i++) {
-            this.numberList.add(number[i]);
-        }
-    }
-
-    public void setNumbers(List<Number> numberList) {
-
-        this.numberList = numberList;
-    }
-
-    public List<Number> getNumbers() {
-
-        return numberList;
+        this.setListObject(new HashSet<>(Arrays.asList(number)));
     }
 
     /**
@@ -27,12 +16,24 @@ public class MathBox extends ObjectBox {
      *
      * @return число double - сумма
      */
-    public double summator() {
-        double summ = 0.0;
-
-        for (int i = 0; i < this.numberList.size(); i++) {
-            summ = summ + this.numberList.get(i).doubleValue();
-
+    public Number summator() {
+        Number summ = 0;
+        Iterator<Number> iterator = this.getListObject().iterator();
+        while (iterator.hasNext()) {
+            Number value = iterator.next();
+            if (summ instanceof Double || value instanceof Double) {
+                summ = summ.doubleValue() + value.doubleValue();
+            } else if (summ instanceof Float || value instanceof Float) {
+                summ = summ.floatValue() + value.floatValue();
+            } else if (summ instanceof Long || value instanceof Long) {
+                summ = summ.longValue() + value.longValue();
+            } else if (summ instanceof Integer || value instanceof Integer) {
+                summ = summ.intValue() + value.intValue();
+            } else if (summ instanceof Short || value instanceof Short) {
+                summ = summ.shortValue() + value.shortValue();
+            } else {
+                summ = summ.byteValue() + value.byteValue();
+            }
         }
         return summ;
     }
@@ -42,32 +43,27 @@ public class MathBox extends ObjectBox {
      *
      * @param divider - делитель
      */
-    public void splitter(Number divider) {
-        for (int i = 0; i < this.numberList.size(); i++) {
-            numberList.set(i, this.numberList.get(i).doubleValue() / divider.doubleValue());
-        }
-    }
-
-    /**
-     * удаляет значение из коллекции
-     *
-     * @param valueList - значение, которое надо удалить
-     */
-    public void deleteList(Integer valueList) {
-        for (int i = 0; i < this.numberList.size(); i++) {
-            if (this.numberList.get(i).doubleValue() == valueList.intValue()) {
-                numberList.remove(i);
+    public void splitter(Integer divider) {
+        HashSet newMathSet = new HashSet<>();
+        Iterator<Number> iterator = this.getListObject().iterator();
+        while (iterator.hasNext()) {
+            Number value = iterator.next();
+            if (value instanceof Double) {
+                newMathSet.add(value.doubleValue() / divider);
+            } else if (value instanceof Float) {
+                newMathSet.add(value.floatValue() / divider);
+            } else if (value instanceof Long) {
+                newMathSet.add(value.longValue() / divider);
+            } else if (value instanceof Integer) {
+                newMathSet.add(value.intValue() / divider);
+            } else if (value instanceof Short) {
+                newMathSet.add(value.shortValue() / divider);
+            } else {
+                newMathSet.add(value.byteValue() / divider);
             }
         }
-    }
 
-    /**
-     * переопределим метод addObject() для создания исключени
-     * при попытке положить Object в MathBox
-     */
-    @Override
-    public void addObject(Object object) throws MyException {
-        throw new MyException();
+        this.setListObject(newMathSet);
     }
 
     /**
@@ -85,8 +81,8 @@ public class MathBox extends ObjectBox {
             return false;
         }
 
-        MathBox objectMathBox = (MathBox) object;
-        return numberList.equals(objectMathBox);
+        lesson04.task01.MathBox objectMathBox = (lesson04.task01.MathBox) object;
+        return this.getListObject().equals(objectMathBox);
     }
 
     /**
@@ -96,12 +92,8 @@ public class MathBox extends ObjectBox {
      */
     @Override
     public int hashCode() {
-        int z = 37;
-        double result = 0.0;
-        for (int i = 0; i < numberList.size(); i++) {
-            result = result + (i * numberList.get(i).doubleValue());
-        }
-        return z * (int) result + this.hashCode();
+        String uniqueID = UUID.randomUUID().toString();
+        return uniqueID.hashCode();
     }
 
     /**
@@ -111,10 +103,6 @@ public class MathBox extends ObjectBox {
      */
     @Override
     public String toString() {
-        String strList = "";
-        for (int i = 0; i < numberList.size(); i++) {
-            strList = strList + numberList.get(i).toString() + "\n";
-        }
-        return strList;
+        return "элементы MathBox: " + this.getListObject().toString() + '}';
     }
 }

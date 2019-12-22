@@ -1,6 +1,7 @@
 package lesson04.task01;
 
 import java.util.*;
+import java.util.UUID;
 
 /**
  * класс MathBox
@@ -26,18 +27,19 @@ public class MathBox {
         Number summ = 0;
         Iterator<Number> iterator = this.getNumbers().iterator();
         while (iterator.hasNext()) {
-            if (summ instanceof Double || iterator.next() instanceof Double) {
-                summ = summ.doubleValue() + iterator.next().doubleValue();
-            } else if (summ instanceof Float || iterator.next() instanceof Float) {
-                summ = summ.floatValue() + iterator.next().floatValue();
-            } else if (summ instanceof Long || iterator.next() instanceof Long) {
-                summ = summ.longValue() + iterator.next().longValue();
-            } else if (summ instanceof Integer || iterator.next() instanceof Integer) {
-                summ = summ.intValue() + iterator.next().intValue();
-            } else if (summ instanceof Short || iterator.next() instanceof Short) {
-                summ = summ.shortValue() + iterator.next().shortValue();
+            Number value = iterator.next();
+            if (summ instanceof Double || value instanceof Double) {
+                summ = summ.doubleValue() + value.doubleValue();
+            } else if (summ instanceof Float || value instanceof Float) {
+                summ = summ.floatValue() + value.floatValue();
+            } else if (summ instanceof Long || value instanceof Long) {
+                summ = summ.longValue() + value.longValue();
+            } else if (summ instanceof Integer || value instanceof Integer) {
+                summ = summ.intValue() + value.intValue();
+            } else if (summ instanceof Short || value instanceof Short) {
+                summ = summ.shortValue() + value.shortValue();
             } else {
-                summ = summ.byteValue() + iterator.next().byteValue();
+                summ = summ.byteValue() + value.byteValue();
             }
         }
         return summ;
@@ -52,19 +54,20 @@ public class MathBox {
         HashSet newMathSet = new HashSet<>();
         Iterator<Number> iterator = this.getNumbers().iterator();
         while (iterator.hasNext()) {
-            if (iterator.next() instanceof Double) {
-                newMathSet.add(iterator.next().doubleValue() / divider);
-            } else if (iterator.next() instanceof Float) {
-                newMathSet.add(iterator.next().floatValue() / divider);
-            } else if (iterator.next() instanceof Long) {
-                newMathSet.add(iterator.next().longValue() / divider);
-            } else if (iterator.next() instanceof Integer) {
-                newMathSet.add(iterator.next().intValue() / divider);
-            } else if (iterator.next() instanceof Short) {
-                newMathSet.add(iterator.next().shortValue() / divider);
-            } else {
-                newMathSet.add(iterator.next().byteValue() / divider);
-            }
+            Number value = iterator.next();
+                if (value instanceof Double) {
+                    newMathSet.add(value.doubleValue() / divider);
+                } else if (value instanceof Float) {
+                    newMathSet.add(value.floatValue() / divider);
+                } else if (value instanceof Long) {
+                    newMathSet.add(value.longValue() / divider);
+                } else if (value instanceof Integer) {
+                    newMathSet.add(value.intValue() / divider);
+                } else if (value instanceof Short) {
+                    newMathSet.add(value.shortValue() / divider);
+                } else {
+                    newMathSet.add(value.byteValue() / divider);
+                }
         }
 
         this.mathSet = newMathSet;
@@ -105,11 +108,8 @@ public class MathBox {
      */
     @Override
     public int hashCode() {
-        int hashMath = 0;
-        for (Iterator<Number> iterator = this.getNumbers().iterator(); iterator.hasNext(); ) {
-            hashMath = hashMath + iterator.next().hashCode();
-        }
-        return hashMath;
+        String uniqueID = UUID.randomUUID().toString();
+        return uniqueID.hashCode();
     }
 
     /**

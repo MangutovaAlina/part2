@@ -19,6 +19,7 @@ import java.util.Scanner;
  */
 
 public class Main {
+
     public static void main(String[] args) {
         /**
          * вводим количество персон
@@ -27,43 +28,22 @@ public class Main {
         System.out.print("Количество персон: ");
         int cnt = input.nextInt();
         /**
-         * случайным образом формируем список:
+         * случайным образом формируем список персон:
          */
         Random r = new Random();
-        String alphabet = "abcdefghijklmnopqrstuvwxyz";
-        StringBuilder names = new StringBuilder();
-
-        /**
-         * создаем список Person
-         */
         List<Person> persons = new ArrayList<>();
 
         for (int i = 0; i < cnt; i++) {
-            /**
-             * создаем случайное имя
-             */
-            names.setLength(0);
-            names.append(Character.toUpperCase(alphabet.charAt(r.nextInt(alphabet.length()))));
-            for (int j = 0; j < 5; j++) {
-                names.append(alphabet.charAt(r.nextInt(alphabet.length())));
-            }
-
-            /**
-             * добавляем в список персон человека со случайным возрастом, именем, полом
-             */
             Person p = new Person(r.nextInt(100),            //количество лет
-                    names.toString(),                               // имя
+                    GetRandomName(),                                // имя
                     Sex.values()[r.nextInt(Sex.values().length)]);  // пол
 
             boolean addperson = true;
 
             try {
-                for (int j = 0; j < persons.size(); j++) {
-                    if (p.equals(persons.get(j))) {
-                        throw new MyException();
-                    }
+                if (persons.contains(p)) {
+                    throw new MyException();
                 }
-
             } catch (MyException e) {
                 addperson = false;
                 System.out.println("MyException: персоны совпадают!");
@@ -72,12 +52,10 @@ public class Main {
             if (addperson) {
                 persons.add(p);
             }
-
-
         }
 
         /**
-         * вызываем сортировку, сперва методом "вставки" (Insertion Sort) потом "пузырьком" (BubbleSort)
+         * вызываем по очереди сортировки, сперва методом "вставки" (Insertion Sort) потом "пузырьком" (BubbleSort)
          * startTime - начальное время
          * stopTime - конечное время
          * periodTime - разница
@@ -103,6 +81,26 @@ public class Main {
             System.out.println(personscopy);
         }
     }
+
+    /**
+     * создаем имя для персоны случайным образом
+     *
+     * @return имя
+     */
+    private static String GetRandomName() {
+        Random r = new Random();
+        String alphabet = "abcdefghijklmnopqrstuvwxyz";
+        StringBuilder names = new StringBuilder();
+
+        names.setLength(0);
+        names.append(Character.toUpperCase(alphabet.charAt(r.nextInt(alphabet.length()))));
+
+        for (int j = 0; j < 5; j++) {
+            names.append(alphabet.charAt(r.nextInt(alphabet.length())));
+        }
+        return names.toString();
+    }
+
 }
 
 class MyException extends Exception {

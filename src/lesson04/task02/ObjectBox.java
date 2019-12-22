@@ -1,23 +1,28 @@
 package lesson04.task02;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * класс ObjectBox
  * с методами addObject, deleteObject, dump
  */
-public class ObjectBox {
-    List<Object> listObject = new ArrayList<>();
+public class ObjectBox<T> {
+    private HashSet<T> listObject;
 
-    public List<Object> getListObject() {
-
+    public HashSet<T> getListObject() {
         return listObject;
     }
 
-    public void setListObject(List<Object> listObject) {
+    public ObjectBox(HashSet<T> listObject) {
+        this.listObject = listObject;
+    }
 
+    public ObjectBox() {
+        this.listObject = new HashSet<>();
+    }
+
+    public void setListObject(HashSet<T> listObject) {
         this.listObject = listObject;
     }
 
@@ -26,8 +31,7 @@ public class ObjectBox {
      *
      * @param object - объект, который надо добавить
      */
-    public void addObject(Object object) {
-
+    public void addObject(T object) {
         listObject.add(object);
     }
 
@@ -36,12 +40,11 @@ public class ObjectBox {
      *
      * @param object - объект, который надо удалить
      */
-    public void deleteObject(Object object) {
-        Iterator iteratorListObject = listObject.iterator();
-        while (iteratorListObject.hasNext()) {
-            Object nextObject = iteratorListObject.next();
-            if (nextObject.equals(object)) {
-                iteratorListObject.remove();
+    public void deleteObject(T object) {
+        Iterator<T> iterator = listObject.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().equals(object)) {
+                iterator.remove();
             }
         }
     }
@@ -52,11 +55,11 @@ public class ObjectBox {
     public String dump() {
         StringBuilder stringBuilder = new StringBuilder();
 
-        for (int i = 0; i < listObject.size(); i++) {
-            stringBuilder.append(" элемент " + i + ": ");
-            stringBuilder.append(listObject.get(i));
+        Iterator<T> iterator = listObject.iterator();
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next().toString());
+            stringBuilder.append(" ");
         }
-        stringBuilder.append(" ");
         return stringBuilder.toString();
     }
 

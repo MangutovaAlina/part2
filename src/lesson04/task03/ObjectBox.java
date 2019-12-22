@@ -1,6 +1,7 @@
 package lesson04.task03;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -8,16 +9,22 @@ import java.util.List;
  * класс ObjectBox
  * с методами addObject, deleteObject, dump
  */
-public class ObjectBox {
-    List<Object> listObject = new ArrayList<>();
+public class ObjectBox<T> {
+    private HashSet<T> listObject;
 
-    public List<Object> getListObject() {
-
+    public HashSet<T> getListObject() {
         return listObject;
     }
 
-    public void setListObject(List<Object> listObject) {
+    public ObjectBox(HashSet<T> listObject) {
+        this.listObject = listObject;
+    }
 
+    public ObjectBox() {
+        this.listObject = new HashSet<>();
+    }
+
+    public void setListObject(HashSet<T> listObject) {
         this.listObject = listObject;
     }
 
@@ -26,9 +33,8 @@ public class ObjectBox {
      *
      * @param object - объект, который надо добавить
      */
-    public void addObject(Object object) throws MyException {
-
-        listObject.add(object);
+    public boolean addObject(T object) {
+        return listObject.add(object);
     }
 
     /**
@@ -36,26 +42,27 @@ public class ObjectBox {
      *
      * @param object - объект, который надо удалить
      */
-    public void deleteObject(Object object) {
-        Iterator iteratorListObject = listObject.iterator();
-        while (iteratorListObject.hasNext()) {
-            Object nextObject = iteratorListObject.next();
-            if (nextObject.equals(object)) {
-                iteratorListObject.remove();
+    public void deleteObject(T object) {
+        Iterator<T> iterator = listObject.iterator();
+        while (iterator.hasNext()) {
+            if (iterator.next().equals(object)) {
+                iterator.remove();
             }
         }
     }
 
     /**
-     * метод dump переписан так, чтобы выводить любой лист
-     *
-     * @param listObj - любой лист
+     * метод dump выводит лист объектов в строчку
      */
-    public void dump(List<?> listObj) {
-        for (Iterator<?> i = listObj.iterator(); i.hasNext(); ) {
-            Object object = i.next();
-            System.out.println(object);
+    public String dump() {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        Iterator<T> iterator = listObject.iterator();
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next().toString());
+            stringBuilder.append(" ");
         }
+        return stringBuilder.toString();
     }
 
 }
