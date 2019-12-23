@@ -98,4 +98,3 @@ public class Pet {
                 + " Person ( " + petOwner.getName() + ", " + petOwner.getAge() + ", " + petOwner.getSex() + " ) " + "\n";
     }
 }
-

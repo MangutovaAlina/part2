@@ -36,4 +36,3 @@ public class Person {
         return "Sex: " + sex + " Age: " + age + " Name: " + name + "\n";
     }
 }
-

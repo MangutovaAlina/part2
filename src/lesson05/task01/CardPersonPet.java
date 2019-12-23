@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.lang.Exception;
 import java.util.stream.Collectors;
 
 /**
@@ -31,9 +30,9 @@ public class CardPersonPet {
      * @param pet - питомец
      */
     public void addCardPet(Pet pet) throws MyException {
-        if (petSearchAll(pet) != null) {
-            System.out.println("Такое животное уже существует");
-            throw new MyException();
+        Pet petfind = petSearchAll(pet);
+        if (petfind.getPetId() != 0) {
+            throw new MyException("Такое животное уже существует!");
         } else {
             cardsPet.add(pet);
         }
@@ -45,14 +44,15 @@ public class CardPersonPet {
      * @param petId     - идентификатор, по которому ищем питомца
      * @param petUpdate - карточка питомца, на которую нужно заменить найденную
      */
-    public void updateCardPet(int petId, Pet petUpdate) {
-        if (petSearchId(petId) != null) {
+    public void updateCardPet(int petId, Pet petUpdate) throws MyException {
+        Pet petfind = petSearchId(petId);
+        if (petfind.getPetId() != 0) {
             Pet pet = petSearchId(petId);
             pet.setPetName(petUpdate.getPetName());
             pet.setPetOwner(petUpdate.getPetOwner());
             pet.setPetWeight(petUpdate.getPetWeight());
         } else {
-            System.out.println("Питомец с id " + petId + " не найден");
+            throw new MyException("Питомец с id " + petId + " не найден!");
         }
     }
 
@@ -60,36 +60,38 @@ public class CardPersonPet {
      * ищем питомца в картотеке по всем полям
      *
      * @param petInput - на вход подаем искомого питомца
-     * @return - возвращаем питомца или null
+     * @return - возвращаем true или false
      */
-    public Pet petSearchAll(Pet petInput) {
+    private Pet petSearchAll(Pet petInput) {
+        Person person = new Person(0, "", Sex.MAN);
+        Pet petfind = new Pet(0, "", person, 0);
         Iterator iterator = cardsPet.iterator();
         while (iterator.hasNext()) {
             Pet pet = (Pet) iterator.next();
             if (pet.petsEqual(petInput)) {
-                return pet;
+                petfind = pet;
             }
-            pet = null;
         }
-        return null;
+        return petfind;
     }
 
     /**
      * ищем питомца по id
      *
      * @param idPet - на вход подаем идентификатор питомца
-     * @return - возвращаем питомца или null
+     * @return - возвращаем true или false
      */
-    public Pet petSearchId(int idPet) {
+    private Pet petSearchId(int idPet) {
+        Person person = new Person(0, "", Sex.MAN);
+        Pet petfind = new Pet(0, "", person, 0);
         Iterator iterator = cardsPet.iterator();
         while (iterator.hasNext()) {
             Pet pet = (Pet) iterator.next();
             if (pet.getPetId() == idPet) {
-                return pet;
+                petfind = pet;
             }
-            pet = null;
         }
-        return null;
+        return petfind;
     }
 
     /**
@@ -131,17 +133,4 @@ public class CardPersonPet {
     public List<Pet> sortCardPersonPetAll(Comparator<Pet> comparator) {
         return cardsPet.stream().sorted(comparator).collect(Collectors.toList());
     }
-
-    /*public List<Pet> sortCardPersonPetAll() {
-        List<Pet> sortedList = new ArrayList<>(cardsPet);
-
-        sortedList.stream().sorted(Comparator.comparing(Pet::getPetOwnerName)
-                .thenComparing(Pet::getPetName)
-                .thenComparing(Pet::getPetWeight)).collect(Collectors.toList());
-
-        return sortedList;
-    }*/
-
-
 }
-

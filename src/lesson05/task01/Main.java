@@ -4,17 +4,17 @@ import java.util.*;
 
 /**
  * Разработать программу – картотеку домашних животных.
- *
+ * <p>
  * У каждого животного есть:
  * - уникальный идентификационный номер,
  * - кличка,
  * - хозяин (объект класс Person с полями – имя, возраст, пол),
  * - вес.
- *
+ * <p>
  * Реализовать:
- *
+ * <p>
  * метод добавления животного в общий список (учесть, что добавление дубликатов должно приводить к исключительной ситуации)
- * поиск животного по его кличке (поиск должен быть эффективным)
+ * поиск животного по его кличке
  * изменение данных животного по его идентификатору
  * вывод на экран списка животных в отсортированном порядке. Поля для сортировки –  хозяин, кличка животного, вес.
  */
@@ -40,31 +40,19 @@ public class Main {
          */
         CardPersonPet cardPersonPet = new CardPersonPet();
 
-        cardPersonPet.addCardPet(cat1);
-        cardPersonPet.addCardPet(cat2);
-        cardPersonPet.addCardPet(cat3);
-        cardPersonPet.addCardPet(dog1);
-        cardPersonPet.addCardPet(dog2);
-        cardPersonPet.addCardPet(dog3);
-
-        /** печать картотеки
-         */
-        cardPersonPet.printCardPersonPetAll();
-
-        /** ищем питомца по id  */
-        int petId = 12;
-        Pet petSearch = cardPersonPet.petSearchId(petId);
-
-        if (petSearch != null) {
-            System.out.println("Питомец с таким идентификатором есть: " + petSearch.toString());
-        } else {
-            System.out.println("Питомец с id " + petId + " не найден");
+        try {
+            cardPersonPet.addCardPet(cat1);
+            cardPersonPet.addCardPet(cat2);
+            cardPersonPet.addCardPet(cat3);
+            cardPersonPet.addCardPet(dog1);
+            cardPersonPet.addCardPet(dog2);
+            cardPersonPet.addCardPet(dog3);
+        } catch (MyException e) {
+            System.out.println(e.getErrorMessage());
         }
 
-        /** ищем питомца по имени  */
+        /** поиск животного по его кличке  */
         String petName = "Vasya";
-        //String petName = "BlaBla";
-
         List<Pet> listPet = cardPersonPet.petSearchName(petName);
 
         if (listPet.size() != 0) {
@@ -76,8 +64,12 @@ public class Main {
         }
 
         /** изменяем питомца по id */
-        Pet cat4 = new Pet(13, "Sonya", person2, 3.5);
-        cardPersonPet.updateCardPet(13, cat4);
+        try {
+            Pet cat4 = new Pet(13, "Sonya", person2, 3.5);
+            cardPersonPet.updateCardPet(13, cat4);
+        } catch (MyException e) {
+            System.out.println(e.getErrorMessage());
+        }
 
         /** печать картотеки
          */
@@ -94,13 +86,11 @@ public class Main {
             System.out.println(" " + sortedList.get(i).toString());
         }
 
-        /*for (int i =0; i < cardPersonPet.sortCardPersonPetAll().size(); i++)  {
-            System.out.println(" " + cardPersonPet.sortCardPersonPetAll().get(i).toString());
-        }*/
-
         /** добавляем дубликат - получаем исключение  */
-        cardPersonPet.addCardPet(cat3);
-
+        try {
+            cardPersonPet.addCardPet(cat3);
+        } catch (MyException e) {
+            System.out.println(e.getErrorMessage());
+        }
     }
 }
-
