@@ -26,22 +26,36 @@ public class Main {
     static final Random r = new Random();
 
     public static void main(String[] args) throws Exception {
+        final int quantityCharInWord = 15;         // предельное количество символов в слове
+
         String[] words = new String[1000];
-        String path = "C:\\tmp_inn\\lesson06";   // путь до файлов
-        int probability = 4;                         // вероятность
-        int countfile = 10;                          // кол-во файлов
-        int size = 5000;                         // размер файла
+        String path = "src\\lesson06\\task02\\";   // путь до файлов
+        int probability = 3;                       // вероятность попадания слова
+        int countfile = 10;                        // кол-во файлов
+        int size = 5000;                           // размер файла
 
         /** формируем массив слов 1000 длины от 1 до 15
          */
         for (int i = 0; i < 1000; i++) {
-            words[i] = randomCreateWord(r.nextInt(15));
-            //System.out.println(" слово = " + words[i] + " i = " + i);
+            words[i] = randomCreateWord(r.nextInt(quantityCharInWord));
         }
         getFiles(path, countfile, size, words, probability);
     }
 
-    public static void getFiles(String path, int n, int size, String[] words, int probability) throws IOException {
+    /**
+     * создание файла
+     *
+     * @param path        путь
+     * @param n           кол-во файлов
+     * @param size        max размер файла
+     * @param words       массив слов
+     * @param probability вероятность вхождения последнего слова
+     * @throws IOException
+     */
+    private static void getFiles(String path, int n, int size, String[] words, int probability) throws IOException {
+        final int quantityWordInSentence = 15;     // предельное количество словв предложении
+        final int quantitySentenceInParagraf = 20; // предельное количество предложений в абзаце
+
         String filename = "examp";
         Path dirpath = Paths.get(path);
 
@@ -62,33 +76,29 @@ public class Main {
                 /** заносим в него абзац
                  */
                 int sizecurrent = 0;
-                int sentprob = 0;
+                boolean sentprob = false;
                 String strtofile = " ";
 
                 /** пишем абзацы в файл, пока не переполнится
                  *  sizecurrent - текущий приблизительный размер
                  */
                 while (sizecurrent < size) {
-
-                    /** заносим в файл абзац
-                     *  ставим табуляцию перед абзацем
-                     */
                     outputfile.write('\t');
 
-                    for (int i = 1; i <= 20; i++) {
-                        sentprob = 0;
+                    for (int i = 1; i <= r.nextInt(quantitySentenceInParagraf); i++) {
+                        sentprob = false;
                         if ((i % probability) == 0) {
-                            sentprob = 1;
+                            sentprob = true;
                         }
 
                         /** заносим в абзац предложение
                          *  strtofile - предложение
                          */
-                        strtofile = randomCreateSentences(r.nextInt(15), sentprob, words).toString();
+                        strtofile = randomCreateSentences(r.nextInt(quantityWordInSentence), sentprob, words).toString();
                         byte[] bytefile = strtofile.getBytes();
                         outputfile.write(bytefile);
 
-                        sizecurrent += bytefile.length + 12;  // увеличиваем размер
+                        sizecurrent += bytefile.length;  // увеличиваем размер
 
                     }
                     outputfile.write('\r');
@@ -100,23 +110,12 @@ public class Main {
     }
 
     /**
-     * функция, которая делает первую букву у слова заглавной
-     *
-     * @param word - слово
-     * @return - слово с заглавной первой буквой
-     */
-    public static String firstUpperCase(String word) {
-        if (word == null || word.isEmpty()) return "";
-        return word.substring(0, 1).toUpperCase() + word.substring(1);
-    }
-
-    /**
      * создаем случайное слово
      *
      * @param wordlength - длина слова
      * @return - возвращается слово заданной длинны
      */
-    public static String randomCreateWord(int wordlength) {
+    private static String randomCreateWord(int wordlength) {
         String alphabet = "abcdefghijklmnopqrstuvwxyz";
         StringBuilder word = new StringBuilder();
 
@@ -135,37 +134,39 @@ public class Main {
      * @param words      - массив слов
      * @return - возвращаем предложение
      */
-    public static StringBuilder randomCreateSentences(int sentlength, int sentprob, String[] words) {
+    private static StringBuilder randomCreateSentences(int sentlength, boolean sentprob, String[] words) {
         StringBuilder sentences = new StringBuilder();
         String sign = ".!?";
 
-        for (int i = 0; i <= sentlength; i++) {
-            if (i == 0) {
-                /** первое слово начинается с заглавной буквы
-                 */
-                switch (sentprob) {
-                    case 0:
-                        /** если вероятность вхождения слова в это предложение words[999] нулевая, то выбираем любое до него                        *
-                         */
-                        sentences.append(firstUpperCase(words[r.nextInt(998)]));
-                        break;
-                    case 1:
-                        /** если по вероятности слово words[999] в предложение входит, то выбираем его                        *
-                         */
-                        sentences.append(firstUpperCase(words[999]));
-                        break;
-                }
-            } else {
-                sentences.append(" ");
-                sentences.append(words[r.nextInt(998)]);
-            }
+        if (!sentprob) {
+            /** если вероятность вхождения слова в это предложение words[999] нулевая, то выбираем любое до него                        *
+             */
+            sentences.append(firstUpperCase(words[r.nextInt(998)]));
+        } else {
+            /** если по вероятности слово words[999] в предложение входит, то выбираем его                        *
+             */
+            sentences.append(firstUpperCase(words[999]));
+        }
+
+        for (int i = 1; i <= sentlength; i++) {
+            if (r.nextInt(998)%6 == 0){ sentences.append(","); }
+            sentences.append(" ");
+            sentences.append(words[r.nextInt(998)]);
         }
 
         sentences.append(sign.charAt(r.nextInt(sign.length())) + " ");
-
         return sentences;
     }
 
-
+    /**
+     * функция, которая делает первую букву у слова заглавной
+     *
+     * @param word - слово
+     * @return - слово с заглавной первой буквой
+     */
+    private static String firstUpperCase(String word) {
+        if (word == null || word.isEmpty()) return "";
+        return word.substring(0, 1).toUpperCase() + word.substring(1);
+    }
 }
 

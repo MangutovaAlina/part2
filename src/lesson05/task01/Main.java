@@ -66,7 +66,7 @@ public class Main {
         /** изменяем питомца по id */
         try {
             Pet cat4 = new Pet(13, "Sonya", person2, 3.5);
-            cardPersonPet.updateCardPet(13, cat4);
+            cardPersonPet.updateCardPet(cat4);
         } catch (MyException e) {
             System.out.println(e.getErrorMessage());
         }

@@ -41,18 +41,17 @@ public class CardPersonPet {
     /**
      * апдейтим карточку питомца, заменяем найденное по id на поля petUpdate
      *
-     * @param petId     - идентификатор, по которому ищем питомца
      * @param petUpdate - карточка питомца, на которую нужно заменить найденную
      */
-    public void updateCardPet(int petId, Pet petUpdate) throws MyException {
-        Pet petfind = petSearchId(petId);
+    public void updateCardPet(Pet petUpdate) throws MyException {
+        Pet petfind = petSearchId(petUpdate.petId);
         if (petfind.getPetId() != 0) {
-            Pet pet = petSearchId(petId);
+            Pet pet = petSearchId(petUpdate.petId);
             pet.setPetName(petUpdate.getPetName());
             pet.setPetOwner(petUpdate.getPetOwner());
             pet.setPetWeight(petUpdate.getPetWeight());
         } else {
-            throw new MyException("Питомец с id " + petId + " не найден!");
+            throw new MyException("Питомец с id " + petUpdate.petId + " не найден!");
         }
     }
 

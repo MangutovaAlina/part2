@@ -2,33 +2,37 @@ package lesson06.task01;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Задание 1. Написать программу, читающую текстовый файл.
- * <p>
+ *
  * Программа должна составлять отсортированный по алфавиту список слов, найденных в файле и сохранять его в файл-результат.
  * Найденные слова не должны повторяться, регистр не должен учитываться. Одно слово в разных падежах – это разные слова.
  */
 
 public class Main {
     public static void main(String[] args) {
-        ArrayList<String> strFileList = new ArrayList<>();
+        List<String> strFileList = new ArrayList<>();
 
-        String path = "C:\\tmp_inn\\lesson06";
-        strFileList = readFromFile(path + "\\input.txt");
+        strFileList = readFromFile("src\\lesson06\\task01\\input.txt");
 
-        /** сортируем лист строчек
+        /**
+         * удаляем повторяющиеся слова
+         */
+        Set<String> setString = new LinkedHashSet<>();
+        setString.addAll(strFileList);
+        strFileList.clear();
+        strFileList.addAll(setString);
+
+        /**
+         * сортируем
          */
         strFileList.sort(String::compareToIgnoreCase);
 
-        /** удаляем повторяющиеся элементы из листа
-         */
-        for (int i = 0; i < strFileList.size() - 1; i++) {
-            if (strFileList.get(i).equalsIgnoreCase(strFileList.get(i + 1))) {
-                strFileList.remove(i + 1);
-            }
-        }
-        writeToFile(strFileList, path + "\\output.txt");
+        writeToFile(strFileList, "src\\lesson06\\task01\\output.txt");
     }
 
     /**
@@ -37,14 +41,16 @@ public class Main {
      * @param txtFileName - имя файла
      * @return - возвращаем ArrayList из строчек
      */
-    public static ArrayList<String> readFromFile(String txtFileName) {
-        ArrayList<String> result = new ArrayList<>();
+    private static List<String> readFromFile(String txtFileName) {
+        List<String> result = new ArrayList<>();
 
         try (BufferedReader buffReader = new BufferedReader(new InputStreamReader(new FileInputStream(txtFileName)))) {
             String lineFromFile = null;
 
             while ((lineFromFile = buffReader.readLine()) != null) {
-                result.add(lineFromFile);
+                for (String string : lineFromFile.split("[\\p{P} \\t\\n\\r]")) {
+                    result.add(string);
+                }
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -57,16 +63,23 @@ public class Main {
     /**
      * пишем в файл
      *
-     * @param listString - что пишем (лист строк)
-     * @param fileName   - куда пишем (имя файла)
+     * @param listString - что пишем (лист слов)
+     * @param fileName   - куда пишем (файл)
      */
-    public static void writeToFile(ArrayList<String> listString, String fileName) {
+    private static void writeToFile(List<String> listString, String fileName) {
         try (BufferedWriter buffWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName)))) {
 
+            String upperWord = "";
             for (int i = 0; i < listString.size(); i++) {
-                buffWriter.write(listString.get(i));
-                buffWriter.newLine();
-                buffWriter.flush();
+                /**
+                 * если разница только в регистре, не берем элемент
+                 */
+                if (!upperWord.equalsIgnoreCase(listString.get(i))) {
+                    buffWriter.write(listString.get(i));
+                    buffWriter.newLine();
+                    buffWriter.flush();
+                }
+                upperWord = listString.get(i);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
