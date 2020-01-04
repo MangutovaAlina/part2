@@ -50,7 +50,7 @@ public class MathBox {
      *
      * @param divider - делитель
      */
-    public void splitter(Integer divider) {
+    public HashSet<Number> splitter(Integer divider) {
         HashSet newMathSet = new HashSet<>();
         Iterator<Number> iterator = this.getNumbers().iterator();
         while (iterator.hasNext()) {
@@ -70,7 +70,7 @@ public class MathBox {
                 }
         }
 
-        this.mathSet = newMathSet;
+        return newMathSet;
     }
 
     /**
@@ -108,8 +108,12 @@ public class MathBox {
      */
     @Override
     public int hashCode() {
-        String uniqueID = UUID.randomUUID().toString();
-        return uniqueID.hashCode();
+        int hash = 0;
+        Iterator<Number> iterator = this.getNumbers().iterator();
+        while (iterator.hasNext()) {
+            hash += iterator.next().hashCode();
+        }
+        return hash;
     }
 
     /**

@@ -27,8 +27,8 @@ public class Main {
         System.out.println("после удаления элемента 5: " + mathBox.toString());
 
         /** делим элементы numberList класса MathBox на число */
-        mathBox.splitter(3);
-        System.out.println("после деления на 3: " + mathBox.toString());
+
+        System.out.println("после деления на 3: " + mathBox.splitter(3).toString());
 
         /** получаем хэшкод */
         System.out.println("хэшкод: " + mathBox.hashCode());
