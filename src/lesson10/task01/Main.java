@@ -12,7 +12,10 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws IOException {
         Client client1 = new Client("Alex", 4998);
+        System.out.println("Alex" + " входит в чат");
         Client client2 = new Client("Masha", 4997);
+        System.out.println("Masha" + " входит в чат");
         Client client3 = new Client("Vasya", 4996);
+        System.out.println("Vasya" + " входит в чат");
     }
 }
