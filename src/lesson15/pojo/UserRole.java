@@ -1,25 +1,28 @@
-package lesson15;
+package lesson15.pojo;
 
-/**  класс, как аналог строки таблицы UserRole
+/**
+ * класс, как аналог строки таблицы UserRole
  */
 public class UserRole {
-    public Integer id;
-    public Integer user_id;
-    public Integer role_id;
+    private Integer id;
+    private Integer user_id;
+    private Integer role_id;
 
-    /** конструктор класса UserRole, входные параметры поля таблицы USERROLE
-     *  @param id
-     *  @param user_id
-     *  @param role_id
-     */
+    public UserRole(Integer user_id, Integer role_id) {
+        this.user_id = user_id;
+        this.role_id = role_id;
+    }
+
     public UserRole(Integer id, Integer user_id, Integer role_id) {
         this.id = id;
         this.user_id = user_id;
         this.role_id = role_id;
     }
 
-    /** геттеры
-     *  @return
+    /**
+     * геттеры
+     *
+     * @return
      */
     public Integer getId() {
         return id;
@@ -43,4 +46,5 @@ public class UserRole {
                 ", role_id=" + role_id + ')';
     }
 }
+
 

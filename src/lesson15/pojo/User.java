@@ -1,28 +1,35 @@
-package lesson15;
+package lesson15.pojo;
 
-import java.time.LocalDate;
+import java.sql.Date;
 
-/**  класс, как аналог строки таблицы User
+/**
+ * класс, как аналог строки таблицы User
  */
 public class User {
-    public Integer id;
-    public String name;
-    public LocalDate birthday;
-    public Integer login_id;
-    public String city;
-    public String email;
-    public String description;
+    private Integer id;
+    private String name;
+    private Date birthday;
+    private String login_id;
+    private String city;
+    private String email;
+    private String description;
 
-    /** конструктор класса юзер, входные параметры поля таблицы USER
-     *  @param id
-     *  @param name
-     *  @param birthday
-     *  @param login_id
-     *  @param city
-     *  @param email
-     *  @param description
+    /**
+     * конструкторы класса User
      */
-    public User(Integer id, String name, LocalDate birthday, Integer login_id, String city, String email, String description) {
+    public User() {
+    }
+
+    public User(String name, Date birthday, String login_id, String city, String email, String description) {
+        this.name = name;
+        this.birthday = birthday;
+        this.login_id = login_id;
+        this.city = city;
+        this.email = email;
+        this.description = description;
+    }
+
+    public User(Integer id, String name, Date birthday, String login_id, String city, String email, String description) {
         this.id = id;
         this.name = name;
         this.birthday = birthday;
@@ -32,8 +39,10 @@ public class User {
         this.description = description;
     }
 
-    /** геттеры
-     *  @return
+    /**
+     * геттеры
+     *
+     * @return
      */
     public Integer getId() {
         return id;
@@ -43,11 +52,11 @@ public class User {
         return name;
     }
 
-    public LocalDate getBirthday() {
+    public Date getBirthday() {
         return birthday;
     }
 
-    public Integer getLogin_id() {
+    public String getLogin_id() {
         return login_id;
     }
 
@@ -77,4 +86,3 @@ public class User {
                 ", description='" + description + '\'' + ')';
     }
 }
-

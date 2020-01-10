@@ -1,31 +1,37 @@
-package lesson15;
+package lesson15.pojo;
 
-/** класс, как аналог строки таблицы Role
+/**
+ * класс, как аналог строки таблицы Role
  */
 public class Role {
-    public Integer id;
-    public EnumName name;
-    public String description;
+    private Integer id;
+    private String name;
+    private String description;
 
-    /** конструктор класса роли, входные параметры поля таблицы ROLE
-     * @param id
-     * @param name
-     * @param description
-     */
-    public Role(Integer id, EnumName name, String description) {
+    public Role() {
+    }
+
+    public Role(String name, String description) {
+        this.name = name;
+        this.description = description;
+    }
+
+    public Role(Integer id, String name, String description) {
         this.id = id;
         this.name = name;
         this.description = description;
     }
 
-    /** геттеры
-     *  @return
+    /**
+     * геттеры
+     *
+     * @return
      */
     public Integer getId() {
         return id;
     }
 
-    public EnumName getName() {
+    public String getName() {
         return name;
     }
 

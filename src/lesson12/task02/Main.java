@@ -10,6 +10,9 @@ import java.util.Random;
  */
 
 public class Main {
+
+    //сотни тысяч прокси классов
+
     public static void main(String[] args) {
         int cnt = 50000;
         List<String> list = new ArrayList<>();
