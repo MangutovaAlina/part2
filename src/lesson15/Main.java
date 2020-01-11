@@ -38,46 +38,45 @@ import java.util.Random;
 public class Main {
 
     public static void main(String[] args) {
-        final Integer COUNT_CLIENT = 10;
+        final int COUNT_CLIENT = 10;
 
         List<String> nameList = Arrays.asList("Administration", "Clients", "Billing");
         Random r = new Random();
 
         try {
-            /**
-             * заполняем таблицу Role, User, UserRole с помощью batch
-             * параметризация есть прямо в нем
+            /*
+              заполняем таблицу Role, User, UserRole с помощью batch
+              параметризация есть прямо в нем
              */
             List<Role> roles = new ArrayList<>();
             for (int i = 0; i < nameList.size(); i++) {
                 Role role = new Role(i + 1, nameList.get(i), "description" + (i + 1));
                 roles.add(role);
             }
-            TableDAO roleDao = new RoleDAO();
+            RoleDAO roleDao = new RoleDAO();
             roleDao.addRowBatch(roles);
 
             List<User> users = new ArrayList<>();
-            ListStringValue listValue = new ListStringValue();
 
             for (int i = 0; i < COUNT_CLIENT; i++) {
-                String name = listValue.randomCreateWord(listValue.countchar);
-                User user = new User(name, Date.valueOf(listValue.randomCreateDate(listValue.yearstart, listValue.yearend)), name + "_id", name + "_city", name + "@mail.ru", "comment_" + name);
+                String name = ListStringValue.randomCreateWord(ListStringValue.countchar);
+                User user = new User(name, Date.valueOf(ListStringValue.randomCreateDate(ListStringValue.yearstart, ListStringValue.yearend)), name + "_id", name + "_city", name + "@mail.ru", "comment_" + name);
                 users.add(user);
             }
-            TableDAO userDao = new UserDAO();
+            UserDAO userDao = new UserDAO();
             userDao.addRowBatch(users);
 
             List<UserRole> userRoles = new ArrayList<>();
             users = userDao.getAll();
-            for (int i = 0; i < users.size(); i++) {
-                UserRole userRole = new UserRole(users.get(i).getId(), 1 + r.nextInt(2));
+            for (User user : users) {
+                UserRole userRole = new UserRole(user.getId(), 1 + r.nextInt(2));
                 userRoles.add(userRole);
             }
-            TableDAO userRoleDao = new UserRoleDAO();
+            UserRoleDAO userRoleDao = new UserRoleDAO();
             userRoleDao.addRowBatch(userRoles);
 
-            /** установка логической точки сохранения(SAVEPOINT)
-             *  для этого убираем автокоммит
+            /* установка логической точки сохранения(SAVEPOINT)
+               для этого убираем автокоммит
              */
             Connection connect = TableDAO.connectionManager.getConnection();
             connect.setAutoCommit(false);
