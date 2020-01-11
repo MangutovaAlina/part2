@@ -44,10 +44,7 @@ public class Main {
         Random r = new Random();
 
         try {
-            /*
-              заполняем таблицу Role, User, UserRole с помощью batch
-              параметризация есть прямо в нем
-             */
+            // заполняем таблицу Role, User, UserRole с помощью batch, параметризация есть прямо в нем
             List<Role> roles = new ArrayList<>();
             for (int i = 0; i < nameList.size(); i++) {
                 Role role = new Role(i + 1, nameList.get(i), "description" + (i + 1));
@@ -75,9 +72,7 @@ public class Main {
             UserRoleDAO userRoleDao = new UserRoleDAO();
             userRoleDao.addRowBatch(userRoles);
 
-            /* установка логической точки сохранения(SAVEPOINT)
-               для этого убираем автокоммит
-             */
+            // установка логической точки сохранения(SAVEPOINT), для этого убираем автокоммит
             Connection connect = TableDAO.connectionManager.getConnection();
             connect.setAutoCommit(false);
 
