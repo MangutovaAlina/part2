@@ -1,5 +1,6 @@
 package lesson15.dao;
 
+import lesson15.MyException;
 import lesson15.pojo.User;
 
 import java.sql.Connection;
@@ -14,9 +15,15 @@ import java.util.Optional;
  *  реализация DAO для класса User таблицы User
  */
 public class UserDAO implements TableDAO<User> {
+    private Connection connection;
+
+    public UserDAO(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
-    public boolean addRow(User user) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public User addRow(User user) throws MyException {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO \"InnBD\".\"USER\" (id, name, \"login_ID\", city, birthday, email, description) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?);");
             preparedStatement.setString(1, user.getName());
@@ -27,15 +34,14 @@ public class UserDAO implements TableDAO<User> {
             preparedStatement.setString(6, user.getDescription());
             System.out.println("добавляем " + preparedStatement.executeUpdate() + " строк");
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new MyException(e.getMessage());
         }
-        return true;
+        return user;
     }
 
     @Override
-    public boolean updateRow(User user) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public User updateRow(User user) throws MyException  {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE \"InnBD\".\"USER\" SET name=?, " +
                             "\"login_ID\"=?" +
@@ -52,30 +58,28 @@ public class UserDAO implements TableDAO<User> {
             preparedStatement.setString(6, user.getDescription());
             preparedStatement.setInt(7, user.getId());
             System.out.println("изменяем " + preparedStatement.executeUpdate() + " строк");
-            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
-        return false;
+        return user;
     }
 
     @Override
-    public boolean deleteRow(Integer id) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public boolean deleteRow(Integer id) throws MyException  {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM \"InnBD\".\"USER\" WHERE id=?;");
             preparedStatement.setInt(1, id);
             System.out.println("удаляем " + preparedStatement.executeUpdate() + " строк");
+            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new MyException(e.getMessage());
         }
-        return true;
     }
 
     @Override
-    public Optional<User> getByID(Integer id) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public Optional<User> getByID(Integer id) throws MyException  {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT id, name, birthday, \"login_ID\", city, email, description FROM  \"InnBD\".\"USER\" WHERE id = ?;");
             preparedStatement.setInt(1, id);
@@ -89,18 +93,18 @@ public class UserDAO implements TableDAO<User> {
                          resultSet.getString(5),
                          resultSet.getString(6),
                          resultSet.getString(7));
-                return Optional.ofNullable(user);
+                return Optional.of(user);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
         return Optional.empty();
     }
 
     @Override
-    public List<User> getAll() {
+    public List<User> getAll() throws MyException  {
         List<User> users = new ArrayList<>();
-        try (Connection connection = connectionManager.getConnection()) {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT id, name, birthday, \"login_ID\", city, email, description FROM  \"InnBD\".\"USER\";");
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -116,15 +120,15 @@ public class UserDAO implements TableDAO<User> {
                 users.add(user);
                 System.out.println(user.toString());
             }
+            return users;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
-        return users;
     }
 
     @Override
-    public boolean addRowBatch(List<User> listBatch) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public boolean addRowBatch(List<User> listBatch) throws MyException  {
+        try {
             PreparedStatement insertBatch = connection.prepareStatement(
                     "INSERT INTO \"InnBD\".\"USER\" (id, name, \"login_ID\", city, birthday, email, description) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?);");
 
@@ -140,10 +144,9 @@ public class UserDAO implements TableDAO<User> {
             }
             System.out.println("заносим в User " + listBatch.size() + " строк");
             insertBatch.executeBatch();
+            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new MyException(e.getMessage());
         }
-        return true;
     }
 }

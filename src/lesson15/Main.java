@@ -1,5 +1,7 @@
 package lesson15;
 
+import lesson15.connectionManager.ConnectionManager;
+import lesson15.connectionManager.ConnectionManagerJdbcImpl;
 import lesson15.dao.RoleDAO;
 import lesson15.dao.TableDAO;
 import lesson15.dao.UserDAO;
@@ -44,23 +46,26 @@ public class Main {
         Random r = new Random();
 
         try {
+            ConnectionManager connectionManager = ConnectionManagerJdbcImpl.getInstance();
+            Connection connection = connectionManager.getConnection();
+
             // заполняем таблицу Role, User, UserRole с помощью batch, параметризация есть прямо в нем
             List<Role> roles = new ArrayList<>();
             for (int i = 0; i < nameList.size(); i++) {
                 Role role = new Role(i + 1, nameList.get(i), "description" + (i + 1));
                 roles.add(role);
             }
-            RoleDAO roleDao = new RoleDAO();
+            RoleDAO roleDao = new RoleDAO(connection);
             roleDao.addRowBatch(roles);
 
             List<User> users = new ArrayList<>();
 
             for (int i = 0; i < COUNT_CLIENT; i++) {
-                String name = ListStringValue.randomCreateWord(ListStringValue.countchar);
-                User user = new User(name, Date.valueOf(ListStringValue.randomCreateDate(ListStringValue.yearstart, ListStringValue.yearend)), name + "_id", name + "_city", name + "@mail.ru", "comment_" + name);
+                String name = UtilsDataTest.randomCreateWord(UtilsDataTest.countchar);
+                User user = new User(name, Date.valueOf(UtilsDataTest.randomCreateDate(UtilsDataTest.yearstart, UtilsDataTest.yearend)), name + "_id", name + "_city", name + "@mail.ru", "comment_" + name);
                 users.add(user);
             }
-            UserDAO userDao = new UserDAO();
+            UserDAO userDao = new UserDAO(connection);
             userDao.addRowBatch(users);
 
             List<UserRole> userRoles = new ArrayList<>();
@@ -69,25 +74,13 @@ public class Main {
                 UserRole userRole = new UserRole(user.getId(), 1 + r.nextInt(2));
                 userRoles.add(userRole);
             }
-            UserRoleDAO userRoleDao = new UserRoleDAO();
+            UserRoleDAO userRoleDao = new UserRoleDAO(connection);
             userRoleDao.addRowBatch(userRoles);
 
-            // установка логической точки сохранения(SAVEPOINT), для этого убираем автокоммит
-            Connection connect = TableDAO.connectionManager.getConnection();
-            connect.setAutoCommit(false);
-
-            Savepoint savepoint = connect.setSavepoint("savepoint");
-
-            PreparedStatement preparedStatement = connect.prepareStatement(
-                    "DELETE FROM \"InnBD\".\"USER_ROLE\";");
-            System.out.println(preparedStatement.executeUpdate());
-            connect.commit();
-
-            connect.rollback(savepoint);
-            System.out.println("откатили удаление");
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            // тестируем savepoint на примере таблицы User
+            System.out.println(UtilsDataTest.ExampleSavePoint(connection));
+        } catch (MyException e) {
+            System.out.println(e.getErrorMessage());
         }
     }
 }

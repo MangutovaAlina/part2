@@ -1,5 +1,6 @@
 package lesson15;
 
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Random;
 /**
  * класс для формирования списка значений для таблицы
  */
-public class ListStringValue {
+public class UtilsDataTest {
 
     static final Random r = new Random();
     public static final Integer intnumber = 100;    // диапазон случайного числа
@@ -40,6 +41,47 @@ public class ListStringValue {
         }
 
         return stringValue;
+    }
+
+    /**
+     * тестируем точки savepoint
+     * заносим две строки, одну откатываем
+     * @param connection
+     * @return
+     * @throws MyException
+     */
+    public static String ExampleSavePoint(Connection connection) throws MyException {
+        try {
+            connection.setAutoCommit(false);
+
+            try (PreparedStatement preparedStatement = connection.prepareStatement(
+                    "INSERT INTO \"InnBD\".\"USER\" (id, name, \"login_ID\", city, birthday, email, description) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?);")) {
+
+                preparedStatement.setString(1, "testSavepoint1");
+                preparedStatement.setString(2, "id1");
+                preparedStatement.setString(3, "city1");
+                preparedStatement.setDate(4, Date.valueOf(UtilsDataTest.randomCreateDate(UtilsDataTest.yearstart, UtilsDataTest.yearend)));
+                preparedStatement.setString(5, "email1");
+                preparedStatement.setString(6, "testSavepoint1");
+                preparedStatement.executeUpdate();
+
+                Savepoint savepoint = connection.setSavepoint("savepoint");
+
+                preparedStatement.setString(1, "testSavepoint2");
+                preparedStatement.setString(2, "id2");
+                preparedStatement.setString(3, "city2");
+                preparedStatement.setDate(4, Date.valueOf(UtilsDataTest.randomCreateDate(UtilsDataTest.yearstart, UtilsDataTest.yearend)));
+                preparedStatement.setString(5, "email2");
+                preparedStatement.setString(6, "testSavepoint2");
+                preparedStatement.executeUpdate();
+
+                connection.rollback(savepoint);
+                connection.commit();
+                return "откатили занесение testSavepoint2";
+            }
+        } catch (SQLException e) {
+            throw new MyException(e.getMessage());
+        }
     }
 
     /**

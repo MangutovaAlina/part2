@@ -1,7 +1,6 @@
 package lesson15.dao;
 
-import lesson15.connectionManager.ConnectionManager;
-import lesson15.connectionManager.ConnectionManagerJdbcImpl;
+import lesson15.MyException;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,18 +10,16 @@ import java.util.Optional;
  * @param <T> класс (User, Role, UserRole, etc)
  */
 public interface TableDAO<T> {
-    public static ConnectionManager connectionManager =
-            ConnectionManagerJdbcImpl.getInstance();
 
-    public boolean addRow(T t);
+    public T addRow(T t) throws MyException;
 
-    public boolean updateRow(T t);
+    public T updateRow(T t) throws MyException;
 
-    public boolean deleteRow(Integer id);
+    public boolean deleteRow(Integer id) throws MyException;
 
-    public Optional<T> getByID(Integer id);
+    public Optional<T> getByID(Integer id) throws MyException;
 
-    public List<T> getAll();
+    public List<T> getAll() throws MyException;
 
-    public boolean addRowBatch(List<T> listBatch);
+    public boolean addRowBatch(List<T> listBatch) throws MyException;
 }

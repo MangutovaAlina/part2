@@ -1,5 +1,6 @@
 package lesson15.dao;
 
+import lesson15.MyException;
 import lesson15.pojo.UserRole;
 
 import java.sql.Connection;
@@ -14,24 +15,29 @@ import java.util.Optional;
  * реализация DAO для класса UserRole таблицы UserRole
  */
 public class UserRoleDAO implements TableDAO<UserRole> {
+    private Connection connection;
+
+    public UserRoleDAO(Connection connection) {
+        this.connection = connection;
+    }
+
     @Override
-    public boolean addRow(UserRole userRole) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public UserRole addRow(UserRole userRole) throws MyException {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "INSERT INTO \"InnBD\".\"USER_ROLE\" (id, user_id, role_id) VALUES (DEFAULT, ?, ?);");
             preparedStatement.setInt(1, userRole.getRole_id());
             preparedStatement.setInt(2, userRole.getUser_id());
             System.out.println("добавляем " + preparedStatement.executeUpdate() + " строк");
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new MyException(e.getMessage());
         }
-        return true;
+        return userRole;
     }
 
     @Override
-    public boolean updateRow(UserRole userRole) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public UserRole updateRow(UserRole userRole) throws MyException  {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE \"InnBD\".\"USER_ROLE\" SET user_id=?, " + "role_id=?" +
                             "WHERE id=?;");
@@ -39,30 +45,28 @@ public class UserRoleDAO implements TableDAO<UserRole> {
             preparedStatement.setInt(2, userRole.getUser_id());
             preparedStatement.setInt(2, userRole.getId());
             System.out.println("изменяем " + preparedStatement.executeUpdate() + " строк");
-            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
-        return false;
+        return userRole;
     }
 
     @Override
-    public boolean deleteRow(Integer id) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public boolean deleteRow(Integer id) throws MyException  {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM \"InnBD\".\"USER_ROLE\" WHERE id=?;");
             preparedStatement.setInt(1, id);
             System.out.println("удаляем " + preparedStatement.executeUpdate() + " строк");
+            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new MyException(e.getMessage());
         }
-        return true;
     }
 
     @Override
-    public Optional<UserRole> getByID(Integer id) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public Optional<UserRole> getByID(Integer id) throws MyException  {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT id, user_id, role_id FROM  \"InnBD\".\"USER_ROLE\" WHERE id=?;");
             preparedStatement.setInt(1, id);
@@ -75,15 +79,15 @@ public class UserRoleDAO implements TableDAO<UserRole> {
                 return Optional.ofNullable(userRole);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
         return Optional.empty();
     }
 
     @Override
-    public List<UserRole> getAll() {
+    public List<UserRole> getAll() throws MyException  {
         List<UserRole> userRoles = new ArrayList<>();
-        try (Connection connection = connectionManager.getConnection()) {
+        try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT id, user_id, role_id FROM  \"InnBD\".\"USER_ROLE\";");
             ResultSet resultSet = preparedStatement.executeQuery();
@@ -95,15 +99,15 @@ public class UserRoleDAO implements TableDAO<UserRole> {
                 userRoles.add(userRole);
                 System.out.println(userRole.toString());
             }
+            return userRoles;
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new MyException(e.getMessage());
         }
-        return userRoles;
     }
 
     @Override
-    public boolean addRowBatch(List<UserRole> listBatch) {
-        try (Connection connection = connectionManager.getConnection()) {
+    public boolean addRowBatch(List<UserRole> listBatch) throws MyException  {
+        try {
             PreparedStatement insertBatch = connection.prepareStatement(
                     "INSERT INTO \"InnBD\".\"USER_ROLE\" (id, user_id, role_id) VALUES (DEFAULT, ?, ?);");
 
@@ -115,10 +119,9 @@ public class UserRoleDAO implements TableDAO<UserRole> {
             }
             System.out.println("заносим в UserRole " + listBatch.size() + " строк");
             insertBatch.executeBatch();
+            return true;
         } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+            throw new MyException(e.getMessage());
         }
-        return true;
     }
 }
