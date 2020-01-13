@@ -29,7 +29,11 @@ public class RoleDAO implements TableDAO<Role> {
             preparedStatement.setInt(1, role.getId());
             preparedStatement.setString(2, role.getName());
             preparedStatement.setString(3, role.getDescription());
-            System.out.println("добавляем " + preparedStatement.executeUpdate() + " строк");
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                role.setId(resultSet.getInt("id"));
+            }
         } catch (SQLException e) {
             throw new MyException(e.getMessage());
         }

@@ -28,7 +28,11 @@ public class UserRoleDAO implements TableDAO<UserRole> {
                     "INSERT INTO \"InnBD\".\"USER_ROLE\" (id, user_id, role_id) VALUES (DEFAULT, ?, ?);");
             preparedStatement.setInt(1, userRole.getRole_id());
             preparedStatement.setInt(2, userRole.getUser_id());
-            System.out.println("добавляем " + preparedStatement.executeUpdate() + " строк");
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                userRole.setId(resultSet.getInt("id"));
+            }
         } catch (SQLException e) {
             throw new MyException(e.getMessage());
         }

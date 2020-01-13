@@ -32,7 +32,11 @@ public class UserDAO implements TableDAO<User> {
             preparedStatement.setDate(4, user.getBirthday());
             preparedStatement.setString(5, user.getEmail());
             preparedStatement.setString(6, user.getDescription());
-            System.out.println("добавляем " + preparedStatement.executeUpdate() + " строк");
+            preparedStatement.execute();
+            ResultSet resultSet = preparedStatement.getGeneratedKeys();
+            if (resultSet.next()) {
+                user.setId(resultSet.getInt("id"));
+            }
         } catch (SQLException e) {
             throw new MyException(e.getMessage());
         }

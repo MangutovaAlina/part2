@@ -72,6 +72,16 @@ public class User {
         return description;
     }
 
+    /**
+     * сеттер для индентификатора
+     *
+     * @param id
+     */
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Override
     /** переопределяем вывод нашей таблицы
      */
