@@ -7,6 +7,7 @@ import java.util.Optional;
 
 /**
  * универсальный интерфейс для DAO
+ *
  * @param <T> класс (User, Role, UserRole, etc)
  */
 public interface TableDAO<T> {

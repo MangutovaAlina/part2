@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Configuration>
+
+    <Appenders>
+        <File name = "file" fileName = "logs/log.log">
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} {%t} %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+        <File name="file2" fileName="logs/log2.log">
+            <MarkerFilter marker="consoleonly" onMatch="DENY" onMismatch="ACCEPT"/>
+            <PatternLayout>
+                <Pattern>%d %p %c{1.} [%t] %m %ex%n</Pattern>
+            </PatternLayout>
+        </File>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MMM-dd hh:mm:ss a } %level %c - %m %n" />
+        </Console>
+
+        <JDBC name="bd" tableName="InnBD.LOGS">
+            <DriverManager connectionString="jdbc:postgresql://localhost:5432/postgres"
+                           driverClassName="org.postgresql.Driver" username="postgres" password="InnopolisBD"/>
+            <Column name="ID" pattern="%u" isUnicode="false" />
+            <Column name="DATE" isEventTimestamp="true" isUnicode="false" />
+            <Column name="LOG_LEVEL" pattern="%level" isUnicode="false" />
+            <Column name="MESSAGE" pattern="%message" isUnicode="false" />
+            <Column name="EXCEPTION" pattern="%ex{full}" isUnicode="false" />
+        </JDBC>
+    </Appenders>
+
+    <Loggers>
+        <Root level="trace">
+            <AppenderRef ref="file" level="DEBUG"/>
+            <AppenderRef ref="console" level="INFO"/>
+        </Root>
+        <Logger name="lesson15.Main" level="info" additivity="false">
+            <AppenderRef ref="file2" level="INFO"/>
+            <AppenderRef ref="console" level="INFO"/>
+            <AppenderRef ref="bd" level="INFO"/>
+        </Logger>
+    </Loggers>
+
+</Configuration>

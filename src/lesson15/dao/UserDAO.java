@@ -1,7 +1,10 @@
 package lesson15.dao;
 
+import lesson15.Main;
 import lesson15.MyException;
 import lesson15.pojo.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,11 +14,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.*;
+
 /**
- *  реализация DAO для класса User таблицы User
+ * реализация DAO для класса User таблицы User
  */
 public class UserDAO implements TableDAO<User> {
     private Connection connection;
+    private static final Logger logger = LogManager.getLogger(Main.class);
 
     public UserDAO(Connection connection) {
         this.connection = connection;
@@ -37,14 +43,16 @@ public class UserDAO implements TableDAO<User> {
             if (resultSet.next()) {
                 user.setId(resultSet.getInt("id"));
             }
+            logger.info("addRow in User:" + user.toString());
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
         return user;
     }
 
     @Override
-    public User updateRow(User user) throws MyException  {
+    public User updateRow(User user) throws MyException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "UPDATE \"InnBD\".\"USER\" SET name=?, " +
@@ -61,28 +69,30 @@ public class UserDAO implements TableDAO<User> {
             preparedStatement.setString(5, user.getEmail());
             preparedStatement.setString(6, user.getDescription());
             preparedStatement.setInt(7, user.getId());
-            System.out.println("изменяем " + preparedStatement.executeUpdate() + " строк");
+            logger.info("updateRow User:" + user.toString());
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
         return user;
     }
 
     @Override
-    public boolean deleteRow(Integer id) throws MyException  {
+    public boolean deleteRow(Integer id) throws MyException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "DELETE FROM \"InnBD\".\"USER\" WHERE id=?;");
             preparedStatement.setInt(1, id);
-            System.out.println("удаляем " + preparedStatement.executeUpdate() + " строк");
+            logger.info("deleteRow from User id=" + id);
             return true;
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
     }
 
     @Override
-    public Optional<User> getByID(Integer id) throws MyException  {
+    public Optional<User> getByID(Integer id) throws MyException {
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
                     "SELECT id, name, birthday, \"login_ID\", city, email, description FROM  \"InnBD\".\"USER\" WHERE id = ?;");
@@ -90,23 +100,25 @@ public class UserDAO implements TableDAO<User> {
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
                 User user = new User(
-                         resultSet.getInt(1),
-                         resultSet.getString(2),
-                         resultSet.getDate(3),
-                         resultSet.getString(4),
-                         resultSet.getString(5),
-                         resultSet.getString(6),
-                         resultSet.getString(7));
+                        resultSet.getInt(1),
+                        resultSet.getString(2),
+                        resultSet.getDate(3),
+                        resultSet.getString(4),
+                        resultSet.getString(5),
+                        resultSet.getString(6),
+                        resultSet.getString(7));
                 return Optional.of(user);
             }
+            logger.info("select from User where id=" + id);
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
         return Optional.empty();
     }
 
     @Override
-    public List<User> getAll() throws MyException  {
+    public List<User> getAll() throws MyException {
         List<User> users = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(
@@ -122,16 +134,17 @@ public class UserDAO implements TableDAO<User> {
                         resultSet.getString(6),
                         resultSet.getString(7));
                 users.add(user);
-                System.out.println(user.toString());
             }
+            logger.info("select all from User");
             return users;
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
     }
 
     @Override
-    public boolean addRowBatch(List<User> listBatch) throws MyException  {
+    public boolean addRowBatch(List<User> listBatch) throws MyException {
         try {
             PreparedStatement insertBatch = connection.prepareStatement(
                     "INSERT INTO \"InnBD\".\"USER\" (id, name, \"login_ID\", city, birthday, email, description) VALUES (DEFAULT, ?, ?, ?, ?, ?, ?);");
@@ -146,10 +159,11 @@ public class UserDAO implements TableDAO<User> {
                 insertBatch.setString(6, user.getDescription());
                 insertBatch.addBatch();
             }
-            System.out.println("заносим в User " + listBatch.size() + " строк");
+            logger.info("insert in User " + listBatch.size() + " strings");
             insertBatch.executeBatch();
             return true;
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
     }

@@ -2,13 +2,9 @@ package lesson15;
 
 import lesson15.connectionManager.ConnectionManager;
 import lesson15.connectionManager.ConnectionManagerJdbcImpl;
-import lesson15.dao.RoleDAO;
-import lesson15.dao.TableDAO;
-import lesson15.dao.UserDAO;
-import lesson15.dao.UserRoleDAO;
-import lesson15.pojo.Role;
-import lesson15.pojo.User;
-import lesson15.pojo.UserRole;
+import lesson15.dao.*;
+import lesson15.pojo.*;
+import org.apache.logging.log4j.*;
 
 import java.sql.*;
 import java.sql.Date;
@@ -19,25 +15,16 @@ import java.util.Random;
 
 /**
  * Задание:
- * 1) Спроектировать базу
- * Таблица USER содержит поля id, name, birthday, login_ID, city, email, description
- * Таблица ROLE содержит поля id, name (принимает значения Administration, Clients, Billing), description
- * Таблица USER_ROLE содержит поля id, user_id, role_id
- * Типы полей на ваше усмотрению, возможно использование VARCHAR(255)
- * <p>
- * 2) Через jdbc интерфейс сделать запись данных(INSERT) в таблицу
- * a) Используя параметризированный запрос
- * b) Используя batch процесс
- * 3) Сделать параметризированную выборку по login_ID и name одновременно
- * 4) Перевести connection в ручное управление транзакциями
- * a) Выполнить 2-3 SQL операции на ваше усмотрение (например, Insert в 3 таблицы – USER, ROLE, USER_ROLE)
- * между sql операциями установить логическую точку сохранения(SAVEPOINT)
- * б) Выполнить 2-3 SQL операции на ваше усмотрение (например, Insert в 3 таблицы – USER, ROLE, USER_ROLE)
- * между sql операциями установить точку сохранения (SAVEPOINT A),
- * намеренно ввести некорректные данные на последней операции, что бы транзакция откатилась к логической точке SAVEPOINT A
+ * Взять за основу ДЗ_15,
+ * покрыть код логированием
+ * в основных блоках try покрыть уровнем INFO
+ * с исключениях catch покрыть уровнем ERROR
+ * настроить конфигурацию логера, что бы все логи записывались в БД, таблица LOGS,
+ * колонки ID, DATE, LOG_LEVEL, MESSAGE, EXCEPTION
  */
 
 public class Main {
+    public static final Logger logger = LogManager.getLogger(Main.class);
 
     public static void main(String[] args) {
         final int COUNT_CLIENT = 10;
@@ -80,6 +67,7 @@ public class Main {
             // тестируем savepoint на примере таблицы User
             System.out.println(UtilsDataTest.ExampleSavePoint(connection));
         } catch (MyException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             System.out.println(e.getErrorMessage());
         }
     }

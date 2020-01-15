@@ -1,5 +1,6 @@
 package lesson15.dao;
 
+import lesson15.Main;
 import lesson15.MyException;
 import lesson15.pojo.Role;
 
@@ -11,11 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.logging.log4j.*;
+
 /**
  * реализация DAO для класса Role таблицы Role
  */
 public class RoleDAO implements TableDAO<Role> {
     private Connection connection;
+    private static final Logger logger = LogManager.getLogger(Main.class);
 
     public RoleDAO(Connection connection) {
         this.connection = connection;
@@ -34,7 +38,9 @@ public class RoleDAO implements TableDAO<Role> {
             if (resultSet.next()) {
                 role.setId(resultSet.getInt("id"));
             }
+            logger.info("addRow in Role:" + role.toString());
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
         return role;
@@ -49,8 +55,9 @@ public class RoleDAO implements TableDAO<Role> {
             preparedStatement.setString(1, role.getName());
             preparedStatement.setString(2, role.getDescription());
             preparedStatement.setInt(3, role.getId());
-            System.out.println("изменяем " + preparedStatement.executeUpdate() + " строк");
+            logger.info("updateRow Role:" + role.toString());
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
         return role;
@@ -62,9 +69,10 @@ public class RoleDAO implements TableDAO<Role> {
             PreparedStatement preparedStatement = this.connection.prepareStatement(
                     "DELETE FROM \"InnBD\".\"ROLE\" WHERE id=?;");
             preparedStatement.setInt(1, id);
-            System.out.println("удаляем " + preparedStatement.executeUpdate() + " строк");
+            logger.info("deleteRow from Role id=" + id);
             return true;
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
     }
@@ -83,7 +91,9 @@ public class RoleDAO implements TableDAO<Role> {
                         resultSet.getString(3));
                 return Optional.of(role);
             }
+            logger.info("select from Role where id=" + id);
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
         return Optional.empty();
@@ -102,10 +112,11 @@ public class RoleDAO implements TableDAO<Role> {
                         resultSet.getString(2),
                         resultSet.getString(3));
                 roles.add(role);
-                System.out.println(role.toString());
             }
+            logger.info("select all from Role");
             return roles;
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
     }
@@ -123,10 +134,11 @@ public class RoleDAO implements TableDAO<Role> {
                 insertBatch.setString(3, role.getDescription());
                 insertBatch.addBatch();
             }
-            System.out.println("заносим в Role " + listBatch.size() + " строк");
+            logger.info("insert in Role " + listBatch.size() + " strings");
             insertBatch.executeBatch();
             return true;
         } catch (SQLException e) {
+            logger.error(Level.ERROR, new Throwable(e.getMessage()));
             throw new MyException(e.getMessage());
         }
     }
